@@ -94,10 +94,12 @@ void flip(){
   // Orignally was 95
   move_arm.write(80);
   delay(1000);
-  for(int i = 91; i <= 150; i++){
+  move_arm.write(150);
+
+  /*for(int i = 91; i <= 150; i++){
     move_arm.write(i);
     delay(15);
-  }
+  }*/
   delay(700);
 }
 
@@ -654,7 +656,7 @@ class Rubik{
       }
       
       // Check left middle piece
-      if(up[1][0] != GREEN || left[0][1] != back_center){
+      if(up[1][0] != GREEN || left[0][1] != left_center){
         return false;
       }
 
@@ -679,44 +681,44 @@ class Rubik{
       }
       if(down[1][2] == GREEN){
         if(right[2][1] == ORANGE){
-          return "FF";
+          return "RR";
         }
         if(right[2][1] == YELLOW){
-          return "DRR";
+          return "DBB";
         }
         if(right[2][1] == WHITE){
-          return "dLL";
+          return "dFF";
         }
         if(right[2][1] == RED){
-          return "DDBB";
+          return "DDLL";
         }
       }
       if(down[2][1] == GREEN){
         if(back[2][1] == YELLOW){
-          return "FF";
+          return "BB";
         }
         if(back[2][1] == RED){
-          return "DRR";
+          return "DLL";
         }
         if(back[2][1] == ORANGE){
-          return "dLL";
+          return "dRR";
         }
         if(back[2][1] == WHITE){
-          return "DDBB";
+          return "DDFF";
         }
       }
       if(down[1][0] == GREEN){
-        if(front[2][1] == RED){
-          return "FF";
+        if(left[2][1] == RED){
+          return "LL";
         }
-        if(front[2][1] == WHITE){
-          return "DRR";
+        if(left[2][1] == WHITE){
+          return "DFF";
         }
-        if(front[2][1] == YELLOW){
-          return "dLL";
+        if(left[2][1] == YELLOW){
+          return "dBB";
         }
-        if(front[2][1] == ORANGE){
-          return "DDBB";
+        if(left[2][1] == ORANGE){
+          return "DDRR";
         }
       }
 
@@ -826,7 +828,9 @@ class Rubik{
 
     void solve_green_cross(){
       while(!check_green_cross()){
-        algorithm(find_green_cross());
+        String algo = find_green_cross();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
       }
     }
 
@@ -864,18 +868,110 @@ class Rubik{
       return true;
     }
 
+    String find_green_corner(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+      
+      if(front[2][2] == GREEN){
+        if(down[0][2] == front_center){
+          return "FDf";
+        }
+        if(down[0][2] == right_center){
+          return "DRDr";
+        }
+        if(down[0][2] == left_center){
+          return "dLDl";
+        }
+        if(down[0][2] == back_center){
+          return "DDBDb";
+        }
+      }
+      if(right[2][0] == GREEN){
+        if(down[0][2] == front_center){
+          return "dfdF";
+        }
+        if(down[0][2] == right_center){
+          return "rdR";
+        }
+        if(down[0][2] == left_center){
+          return "DDldL";
+        }
+        if(down[0][2] == back_center){
+          return "DbdB";
+        }
+      }
+      if(down[0][2] == GREEN){
+        if(front[2][2] == front_center){
+          return "dfddFDfdF";
+        }
+        if(front[2][2] == right_center){
+          return "rddRDrdR";
+        }
+        if(front[2][2] == left_center){
+          return "DDlddLDldL";
+        }
+        if(front[2][2] == back_center){
+          return "DbddBDbdB";
+        }
+      }
+      return "";
+    }
+
     String find_green_corners(){
+      if(find_green_corner() != ""){
+        return find_green_corner();
+      }
+      rotate_clockwise();
+      if(find_green_corner() != ""){
+        return find_green_corner();
+      }
+      rotate_clockwise();
+      if(find_green_corner() != ""){
+        return find_green_corner();
+      }
+      rotate_clockwise();
+      if(find_green_corner() != ""){
+        return find_green_corner();
+      }
+
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(up[2][2] == GREEN || front[0][2] == GREEN || right[0][0] == GREEN){
+        return "rDR";
+      }
+      if(up[0][2] == GREEN || back[0][0] == GREEN || right[0][2] == GREEN){
+        return "bdB";
+      }
+      if(up[0][0] == GREEN || back[0][2] == GREEN || left[0][0] == GREEN){
+        return "Bdb";
+      }
+      if(up[2][0] == GREEN || front[0][0] == GREEN || left[0][2] == GREEN){
+        return "LDl";
+      }
+      
       return "";
     }
 
     void solve_green_corners(){
       while(!check_green_corners()){
-        algorithm(find_green_corners());
+        String algo = find_green_corners();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
       }
     }
 
     void solve(){
+      Serial.println("Starting Solve");
+      Serial.println("Solving Green Cross");
       solve_green_cross();
+      Serial.println("Solving Green Corners");
+      solve_green_corners();
+      Serial.println("Finished Solve");
     }
 
     int scan(){
@@ -887,11 +983,11 @@ class Rubik{
       
       int counter = 1;
 
-      for(int i = 0; i < 6; i++){
+      for(int i = 0; i < 3; i++){
         tcs.getRawData(&r, &g, &b, &c);        
         Serial.print("Counter: "); Serial.print(counter); Serial.print("Red: "); Serial.print(r); Serial.print("Green: "); Serial.print(g); Serial.print("Blue: "); Serial.print(b); Serial.println();
 
-        if(i > 2){
+        if(i > 1){
           red += r;
           green += g;
           blue += b;
@@ -899,11 +995,6 @@ class Rubik{
         counter++;
       }
 
-      red = red / 3;
-      green = green / 3;
-      blue = blue / 3;
-
-      Serial.println("Show");
       Serial.println(red);
       Serial.println(green);
       Serial.println(blue);
@@ -921,27 +1012,24 @@ class Rubik{
 
       // First cube
       Serial.println("First Cube");
-      light_arm.write(101);
+      light_arm.write(111);
       color = scan();
       Serial.println(number_to_color(color));
-      up[1][2] = GREEN;
-      delay(5000);
+      up[1][2] = color;
 
       // Second cube
       Serial.println("Second Cube");
-      light_arm.write(93);
+      light_arm.write(104);
       color = scan();
       Serial.println(number_to_color(color));
-      up[1][1] = GREEN;
-      delay(5000);
+      up[1][1] = color;
 
       // Third cube
       Serial.println("Third Cube");
-      light_arm.write(86);
+      light_arm.write(95);
       color = scan();
       Serial.println(number_to_color(color));
-      up[1][0] = GREEN;
-      delay(5000);
+      up[1][0] = color;
 
       // Platform 45
       platform.write(51);
@@ -949,19 +1037,17 @@ class Rubik{
       
       // Fourth cube
       Serial.println("Fourth Cube");
-      light_arm.write(105);
+      light_arm.write(116);
       color = scan();
       Serial.println(number_to_color(color));
-      up[2][2] = GREEN;
-      delay(5000);
+      up[2][2] = color;
 
       // Fifth cube
       Serial.println("Fifth Cube");
-      light_arm.write(83);
+      light_arm.write(94);
       color = scan();
       Serial.println(number_to_color(color));
-      up[0][0] = GREEN;
-      delay(5000);
+      up[0][0] = color;
 
       // Platform 90
       platform.write(91);
@@ -969,61 +1055,133 @@ class Rubik{
       
       // Sixth cube
       Serial.println("Sixth Cube");
-      light_arm.write(102);
+      light_arm.write(113);
       color = scan();
       Serial.println(number_to_color(color));
-      up[2][1] = GREEN;
-      delay(5000);
+      up[2][1] = color;
 
       // Seventh cube
       Serial.println("Seventh Cube");
-      light_arm.write(86);
+      light_arm.write(97);
       color = scan();
       Serial.println(number_to_color(color));
-      up[0][1] = GREEN;
-      delay(5000);
+      up[0][1] = color;
 
-      //platform 135
+      // Platform 135
       platform.write(131);
       delay(1000);
 
       // Eighth cube
       Serial.println("Eighth Cube");
-      light_arm.write(105);
+      light_arm.write(115);
       color = scan();
       Serial.println(number_to_color(color));
-      up[2][0] = GREEN;
-      delay(5000);
+      up[2][0] = color;
 
       // Ninth cube
       Serial.println("Ninth Cube");
-      light_arm.write(82);
+      light_arm.write(94);
       color = scan();
       Serial.println(number_to_color(color));
-      up[0][2] = GREEN;
-      delay(5000);
+      up[0][2] = color;
 
       // Reset platform and light arm
       platform.write(12);
       light_arm.write(180);
       delay(1000);
+
+      print_cube();
     }
 
     void scan_cube(){
+      Serial.println("Start Scanning Cube");
+      Serial.println("First Face");
       scan_face();
       flip_cube();
+      Serial.println("Second Face");
       scan_face();
       flip_cube();
+      Serial.println("Third Face");
       scan_face();
       flip_cube();
+      Serial.println("Fourth Face");
       scan_face();
       rotate_counterclockwise();
       flip_cube();
+      rotate_clockwise();
+      Serial.println("Fifth Face");
       scan_face();
       rotate_counterclockwise();
       flip_cube();
       flip_cube();
+      rotate_clockwise();
+      Serial.println("Sixth Face");
       scan_face();
+      Serial.println("Done Scanning Cube");
+    }
+
+    void orient_cube(int up_color, int front_color){
+      Serial.println("Start Orienting Cube");
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+      int up_center = up[1][1];
+      int down_center = down[1][1];
+
+      Serial.println("Part 1");
+      print_cube();
+      if(back_center == up_color){
+        Serial.println("Back Center");
+        flip_cube();
+        flip_cube();
+        flip_cube();
+      }
+      if(down_center == up_color){
+        Serial.println("Down Center");
+        flip_cube();
+        flip_cube();
+      }
+      if(front_center == up_color){
+        Serial.println("Front Center");
+        flip_cube();
+      }
+      if(left_center == up_color){
+        Serial.println("Left Center");
+        rotate_counterclockwise();
+        flip_cube();
+        rotate_clockwise();
+      }
+      if(right_center == up_color){
+        Serial.println("Right Center");
+        rotate_clockwise();
+        flip_cube();
+        rotate_counterclockwise();
+      }
+
+      back_center = back[1][1];
+      right_center = right[1][1];
+      front_center = front[1][1];
+      left_center = left[1][1];
+      up_center = up[1][1];
+      down_center = down[1][1];
+      
+      Serial.println("Part 2");
+      print_cube();
+      if(back_center == front_color){
+        Serial.println("Back Center");
+        rotate_clockwise();
+        rotate_clockwise();
+      }
+      if(left_center == front_color){
+        Serial.println("Left Center");
+        rotate_counterclockwise();
+      }
+      if(right_center == front_color){
+        Serial.println("Right Center");
+        rotate_clockwise();
+      }
+      Serial.println("Done Orienting Cube");
     }
 
     int front[N][N];
@@ -1101,7 +1259,7 @@ void initialize_servos(){
 
   delay(300);
 
-  move_arm.write(172);
+  move_arm.write(150);
   move_arm.attach(6);
 
   delay(300);
@@ -1121,10 +1279,17 @@ void setup() {
   // Begin Serial communication at a baud rate of 9600:
   Serial.begin(9600);
 
+  // Initialize
+  Serial.println("Initializing");
+  Serial.println("Initializing Light Sensor");
   initialize_light_sensor();
+  Serial.println("Initializing Servos");
   initialize_servos();
+  Serial.println("Initialized");
 
-  platform_middle(1000);  
+  // Set platform in the middle for ease of solving
+  //Serial.println("Platform Centered");
+  //platform_middle(3000);  
   
   // Delay to make sure I can always reset program
   delay(2000);
@@ -1133,14 +1298,13 @@ void setup() {
 Rubik rubik;
 
 void loop() {
+  rubik.scan_cube();
+  rubik.rotate_counterclockwise();
+  rubik.orient_cube(GREEN, WHITE);
   rubik.print_cube();
-  delay(3000);
-  rubik.scan_face();
-  delay(3000);
-  rubik.print_cube();
-  delay(100000);
-  
+  //delay(60000);
   rubik.solve();
+  delay(100000);  
 
   Serial.println("DONE");
   delay(2000);
