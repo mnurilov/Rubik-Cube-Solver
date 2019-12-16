@@ -1,6 +1,4 @@
-#include <Stepper.h>
 #include <Servo.h>
-#include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
 //   u
@@ -664,6 +662,11 @@ class Rubik{
     }
 
     String find_green_cross(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+      
       // Look for green edges on the down face for quick solve
       if(down[0][1] == GREEN){
         if(front[2][1] == WHITE){
@@ -811,16 +814,24 @@ class Rubik{
 
     // Top Pieces
     if(up[2][1] == GREEN || front[0][1] == GREEN){
-      return "FF";
+      if(up[2][1] != GREEN && front[0][1] != front_center){
+        return "FF";
+      }
     }
     if(up[1][2] == GREEN || right[0][1] == GREEN){
-      return "RR";
+      if(up[1][2] != GREEN && right[0][1] != right_center){
+        return "RR";
+      }
     }
     if(up[0][1] == GREEN || back[0][1] == GREEN){
-      return "BB";
+      if(up[0][1] != GREEN && back[0][1] != back_center){
+        return "BB";
+      }
     }
     if(up[1][0] == GREEN || left[0][1] == GREEN){
-      return "LL";
+      if(up[1][0] != GREEN && left[0][1] != left_center){
+        return "LL";
+      }
     }
     
       return "";
@@ -965,13 +976,418 @@ class Rubik{
       }
     }
 
+    bool check_second_layer(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(front[1][0] != front_center || left[1][2] != left_center){
+        return false;
+      }
+      if(front[1][2] != front_center || right[1][0] != right_center){
+        return false;
+      }
+      if(back[1][2] != back_center || left[1][0] != left_center){
+        return false;
+      }
+      if(back[1][0] != back_center || right[1][2] != right_center){
+        return false;
+      }
+
+      return true;
+    }
+    
+    String find_second_layer(){
+      if(front[2][1] != BLUE && down[0][1] != BLUE){
+        if(front[2][1] == ORANGE && down[0][1] == WHITE){
+          return "DDFdfdrDR";
+        }
+        if(front[2][1] == ORANGE && down[0][1] == YELLOW){
+          return "bDBDRdr";
+        }
+        if(front[2][1] == WHITE && down[0][1] == ORANGE){
+          return "drDRDFdf";
+        }
+        if(front[2][1] == WHITE && down[0][1] == RED){
+          return "DLdldfDF";
+        }
+        if(front[2][1] == RED && down[0][1] == WHITE){
+          return "ddfDFDLdl";
+        }
+        if(front[2][1] == RED && down[0][1] == YELLOW){
+          return "BdbdlDL";
+        }
+        if(front[2][1] == YELLOW && down[0][1] == ORANGE){
+          return "dRdrdbDB";
+        }
+        if(front[2][1] == YELLOW && down[0][1] == RED){
+          return "DlDLDBdb";
+        }
+      }
+      
+      return "";
+    }
+
+    String find_second_layers(){
+      if(find_second_layer() != ""){
+        return find_second_layer();
+      }
+      turn_clockwise();
+      if(find_second_layer() != ""){
+        return find_second_layer();
+      }
+      turn_clockwise();
+      if(find_second_layer() != ""){
+        return find_second_layer();
+      }
+      turn_clockwise();
+      if(find_second_layer() != ""){
+        return find_second_layer();
+      }
+
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(front[1][0] != BLUE && left[1][2] != BLUE){
+        if(front[1][0] != front_center || left[1][2] != left_center){
+          return "LdldfDF";
+        }
+      }
+      if(front[1][2] != BLUE && right[1][0] != BLUE){
+        if(front[1][2] != front_center || right[1][0] != right_center){
+          return "rDRDFdf";
+        }
+      }
+      if(back[1][2] != BLUE && left[1][0] != BLUE){
+        if(back[1][2] != back_center || left[1][0] != left_center){
+          return "BdbdlDL";
+        }
+      }
+      if(back[1][0] != BLUE && right[1][2] != BLUE){
+        if(back[1][0] != back_center || right[1][2] != right_center){
+          return "bDBDRdr";
+        }
+      }
+      
+      return "";
+    }
+
+    void solve_second_layer(){
+      while(!check_second_layer()){
+        String algo = find_second_layers();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
+      }
+    }
+
+    bool check_blue_cross(){
+      if(down[0][1] == BLUE && down[2][1] == BLUE && down[1][0] == BLUE && down[1][1] == BLUE && down[1][2] == BLUE){
+        return true;
+      }
+      return false;
+    }
+
+    String find_blue_cross(){
+      if(down[0][1] == BLUE && down[1][2] == BLUE){
+        return "DFLDldLDldf";
+      }
+      if(down[1][2] == BLUE && down[2][1] == BLUE){
+        return "FLDldLDldf";
+      }
+      if(down[2][1] == BLUE && down[1][0] == BLUE){
+        return "dFLDldLDldf";
+      }
+      if(down[1][0] == BLUE && down[0][1] == BLUE){
+        return "DDFLDldLDldf";
+      }
+      if(down[1][0] == BLUE && down[1][2] == BLUE){
+        return "FLDldf";
+      }
+      if(down[0][1] == BLUE && down[2][1] == BLUE){
+        return "DFLDldf";
+      }
+      
+      return "FLDldf";
+    }
+
+    void solve_blue_cross(){
+      while(!check_blue_cross()){
+        String algo = find_blue_cross();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
+      }
+    }
+
+    bool check_blue_edge(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(front[2][1] == front_center && right[2][1] == right_center && left[2][1] == left_center && back[2][1] == back_center){
+        return true;
+      }
+      return false;
+    }
+
+    String find_blue_edge(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(front[2][1] == front_center && right[2][1] == right_center){
+        return "RDrDRDDrD";
+      }
+      if(back[2][1] == back_center && right[2][1] == right_center){
+        return "BDbDBDDbD";
+      }
+      if(left[2][1] == left_center && back[2][1] == back_center){
+        return "LDlDLDDlD";
+      }
+      if(front[2][1] == front_center && left[2][1] == left_center){
+        return "FDfDFDDfD";
+      }
+      if(front[2][1] == front_center && back[2][1] == back_center){
+        return "LDlDLDDl";
+      }
+      if(left[2][1] == left_center && right[2][1] == right_center){
+        return "BDbDBDDb";
+      }
+
+      return "";
+    }
+
+    String find_blue_edges(){
+      if(find_blue_edge() != ""){
+        return find_blue_edge();
+      }
+      turn_clockwise();
+      if(find_blue_edge() != ""){
+        return find_blue_edge();
+      }
+      turn_clockwise();
+      if(find_blue_edge() != ""){
+        return find_blue_edge();
+      }
+      turn_clockwise();
+      if(find_blue_edge() != ""){
+        return find_blue_edge();
+      }
+
+      return "BDbDBDDbD";
+    }
+
+    void solve_blue_edge(){
+      while(!check_blue_edge()){
+        String algo = find_blue_edges();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
+      }
+    }
+
+    bool check_blue_corner(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+
+      if(front[2][2] != front_center && front[2][2] != right_center && front[2][2] != BLUE){
+        return false;
+      }
+      if(right[2][0] != front_center && right[2][0] != right_center && right[2][0] != BLUE){
+        return false;
+      }
+      if(down[0][2] != front_center && down[0][2] != right_center && down[0][2] != BLUE){
+        return false;
+      }
+      
+      if(front[2][0] != front_center && front[2][0] != left_center && front[2][0] != BLUE){
+        return false;
+      }
+      if(left[2][2] != front_center && left[2][2] != left_center && left[2][2] != BLUE){
+        return false;
+      }
+      if(down[0][0] != front_center && down[0][0] != left_center && down[0][0] != BLUE){
+        return false;
+      }
+      
+      if(back[2][0] != back_center && back[2][0] != right_center && back[2][0] != BLUE){
+        return false;
+      }
+      if(right[2][2] != back_center && right[2][2] != right_center && right[2][2] != BLUE){
+        return false;
+      }
+      if(down[2][2] != back_center && down[2][2] != right_center && down[2][2] != BLUE){
+        return false;
+      }
+      
+      if(back[2][2] != back_center && back[2][2] != left_center && back[2][2] != BLUE){
+        return false;
+      }
+      if(left[2][0] != back_center && left[2][0] != left_center && left[2][0] != BLUE){
+        return false;
+      }
+      if(down[2][0] != back_center && down[2][0] != left_center && down[2][0] != BLUE){
+        return false;
+      }
+
+      return true;
+    }
+
+    String find_blue_corner(){
+      int back_center = back[1][1];
+      int right_center = right[1][1];
+      int front_center = front[1][1];
+      int left_center = left[1][1];
+      
+      if(front[2][2] == front_center || front[2][2] == right_center || front[2][2] == BLUE){
+        if(right[2][0] == front_center || right[2][0] == right_center || right[2][0] == BLUE){
+          if(down[0][2] == front_center || down[0][2] == right_center || down[0][2] == BLUE){
+            return "drDLdRDl";
+          }      
+        }      
+      }
+
+      if(front[2][0] == front_center || front[2][0] == left_center || front[2][0] == BLUE){
+        if(left[2][2] == front_center || left[2][2] == left_center || left[2][2] == BLUE){
+          if(down[0][0] == front_center || down[0][0] == left_center || down[0][0] == BLUE){
+            return "DLdrDldR";
+          }
+        }      
+      }
+      
+      if(back[2][0] == back_center && back[2][0] == right_center || back[2][0] == BLUE){
+        if(right[2][2] == back_center && right[2][2] == right_center || right[2][2] == BLUE){
+          if(down[2][2] == back_center && down[2][2] == right_center || down[2][2] == BLUE){
+            return "DRdlDrdL";
+          }
+        }      
+      }
+      
+      if(back[2][2] == back_center || back[2][2] == left_center || back[2][2] == BLUE){
+        if(left[2][0] == back_center || left[2][0] == left_center || left[2][0] == BLUE){
+          if(down[2][0] == back_center || down[2][0] == left_center || down[2][0] == BLUE){
+            return "dlDRdLDr";
+          }
+        }      
+      }
+      
+      return "drDLdRDl";
+    }
+
+    void solve_blue_corner(){
+      while(!check_blue_corner()){
+        String algo = find_blue_corner();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
+      }
+    }
+
+    bool check_solve_cube(){
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(front[i][j] != front[1][1]){
+            return false;
+          }
+        }
+      }
+
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(back[i][j] != back[1][1]){
+            return false;
+          }
+        }
+      }
+
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(left[i][j] != left[1][1]){
+            return false;
+          }
+        }
+      }
+
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(right[i][j] != right[1][1]){
+            return false;
+          }
+        }
+      }
+
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(up[i][j] != up[1][1]){
+            return false;
+          }
+        }
+      }
+
+      for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+          if(down[i][j] != down[1][1]){
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    String find_solve_cube(){
+      if(up[2][2] == BLUE){
+        return "U";
+      }
+      return "rdRD";
+    }
+    
+    void solve_cube(){
+      while(!check_solve_cube()){
+        String algo = find_solve_cube();
+        Serial.print("Algorithm: "); Serial.println(algo);
+        algorithm(algo);
+      }
+    }
+
     void solve(){
       Serial.println("Starting Solve");
       Serial.println("Solving Green Cross");
       solve_green_cross();
       Serial.println("Solving Green Corners");
       solve_green_corners();
+      Serial.println("Orienting for Second Layer Solve");
+      orient_cube(GREEN, WHITE);
+      Serial.println("Solving Second Layer");
+      solve_second_layer();
+      Serial.println("Orienting for Blue Cross Solve");
+      orient_cube(GREEN, WHITE);
+      Serial.println("Solving Blue Cross");
+      solve_blue_cross();
+      Serial.println("Orienting for Blue Edge Solve");
+      orient_cube(GREEN, WHITE);
+      Serial.println("Solving Blue Edge");
+      solve_blue_edge();
+      Serial.println("Orienting for Blue Corner Solve");
+      orient_cube(GREEN, WHITE);
+      Serial.println("Solving Blue Corner");
+      solve_blue_corner();
+      Serial.println("Orienting for Final Solve");
+      orient_cube(BLUE, WHITE);
+      Serial.println("Solving Cube");
+      solve_cube();
       Serial.println("Finished Solve");
+      hold_arm_back(1000);
+      move_arm_back(1000);
+      delay(2000);
+      while(1){
+        platform_start(500);
+        platform_end(500);
+      }
     }
 
     int scan(){
@@ -1118,6 +1534,11 @@ class Rubik{
       Serial.println("Sixth Face");
       scan_face();
       Serial.println("Done Scanning Cube");
+    }
+
+    void secure_scan_cube(){
+      scan_cube();
+      
     }
 
     void orient_cube(int up_color, int front_color){
@@ -1286,10 +1707,6 @@ void setup() {
   Serial.println("Initializing Servos");
   initialize_servos();
   Serial.println("Initialized");
-
-  // Set platform in the middle for ease of solving
-  //Serial.println("Platform Centered");
-  //platform_middle(3000);  
   
   // Delay to make sure I can always reset program
   delay(2000);
@@ -1302,17 +1719,5 @@ void loop() {
   rubik.rotate_counterclockwise();
   rubik.orient_cube(GREEN, WHITE);
   rubik.print_cube();
-  //delay(60000);
   rubik.solve();
-  delay(100000);  
-
-  Serial.println("DONE");
-  delay(2000);
-  hold_arm_back(1000);
-  move_arm_back(1000);
-  delay(2000);
-  while(1){
-    platform_start(500);
-    platform_end(500);
-  }
 }
