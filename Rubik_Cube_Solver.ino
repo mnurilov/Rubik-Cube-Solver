@@ -1537,546 +1537,169 @@ class Rubik{
     }
 
     bool check_scan_cube(){
-      int red[3];
-      int green[3];
-      int blue[3];
-      int white[3];
-      int yellow[3];
-      int orange[3];
-      for(int i = 0; i < 3; i++){
-        red[i] = 0;
-        green[i] = 0;
-        blue[i] = 0;
-        white[i] = 0;
-        yellow[i] = 0;
-        orange[i] = 0;
-      }
+      int red = 0;
+      int green = 0;
+      int blue = 0;
+      int white = 0;
+      int yellow = 0;
+      int orange = 0;
 
       for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (front[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
+          switch (front[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
           }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (front[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
+          switch (back[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
           }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (front[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
+          switch (left[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
+          }
+          switch (right[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
+          }
+          switch (up[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
+          }
+          switch (down[i][j]){
+            case 1:
+            red++;
+            break;
+
+            case 2:
+            green++;
+            break;
+
+            case 3:
+            blue++;
+            break;
+
+            case 4:
+            white++;
+            break;
+
+            case 5:
+            yellow++;
+            break;
+
+            case 6:
+            orange++;
+            break;
           }
         }
       }
-
-      for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (left[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (left[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (left[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
-          }
-        }
-      }
-
-      for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (right[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (right[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (right[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
-          }
-        }
-      }
-
-      for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (back[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (back[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (back[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
-          }
-        }
-      }
-
-      for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (down[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (down[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (down[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
-          }
-        }
-      }
-
-      for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-          if(i == 1 && j == 1){
-            switch (up[i][j]){
-              case 1:
-              red[0]++;
-              break;
-              
-              case 2:
-              green[0]++;
-              break;
-              
-              case 3:
-              blue[0]++;
-              break;
-              
-              case 4:
-              white[0]++;
-              break;
-              
-              case 5:
-              yellow[0]++;
-              break;
-              
-              case 6:
-              orange[0]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)){
-            switch (up[i][j]){
-              case 1:
-              red[1]++;
-              break;
-              
-              case 2:
-              green[1]++;
-              break;
-              
-              case 3:
-              blue[1]++;
-              break;
-              
-              case 4:
-              white[1]++;
-              break;
-              
-              case 5:
-              yellow[1]++;
-              break;
-              
-              case 6:
-              orange[1]++;
-              break;
-            }
-          }
-          if((i == 0 && j == 0) || (i == 0 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 2)){
-            switch (up[i][j]){
-              case 1:
-              red[2]++;
-              break;
-              
-              case 2:
-              green[2]++;
-              break;
-              
-              case 3:
-              blue[2]++;
-              break;
-              
-              case 4:
-              white[2]++;
-              break;
-              
-              case 5:
-              yellow[2]++;
-              break;
-              
-              case 6:
-              orange[2]++;
-              break;
-            }
-          }
-        }
-      }
-
-      if(red[0] != 1 || green[0] != 1 || blue[0] != 1 || white[0] != 1 || yellow[0] != 1 || orange[0] != 1){
-        return false;
-      }
-
-      if(red[1] != 4 || green[1] != 4 || blue[1] != 4 || white[1] != 4 || yellow[1] != 4 || orange[1] != 4){
-        return false;
-      }
-
-      if(red[2] != 4 || green[2] != 4 || blue[2] != 4 || white[2] != 4 || yellow[2] != 4 || orange[2] != 4){
+           
+      if(red != 9 || green != 9 || blue != 9 || white != 9 || yellow != 9 || orange != 9){
         return false;
       }
 
@@ -2084,6 +1707,8 @@ class Rubik{
     }
 
     void secure_scan_cube(){
+      scan_cube();
+
       while(!check_scan_cube()){
         scan_cube();
       }
