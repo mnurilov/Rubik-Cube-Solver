@@ -29,7 +29,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 int platform_rotation = 0;
 
 // Delays
-const int general_delay = 700;
+const int general_delay = 500;
+const int platform_delay = 500;
 
 int determine_color(double red, double green, double blue){
   // Red
@@ -87,18 +88,10 @@ String number_to_color(int num){
 }
 
 void flip(){
-  move_arm_back(700);
-  
-  // Orignally was 95
+  move_arm_back(500);
   move_arm.write(80);
-  delay(1000);
-  move_arm.write(150);
-
-  /*for(int i = 91; i <= 150; i++){
-    move_arm.write(i);
-    delay(15);
-  }*/
-  delay(700);
+  delay(500);
+  move_arm_back(300);
 }
 
 void move_arm_back(int mili_seconds){
@@ -142,61 +135,61 @@ void platform_end(int mili_seconds){
 void platform_clockwise(bool turning){
   if(platform_rotation == 0){
     if(turning){
-      hold_arm_back(1500);
-      platform_middle(1500);
+      hold_arm_back(platform_delay);
+      platform_middle(platform_delay);
       flip();
       flip();
-      platform_end(1500);
+      platform_end(platform_delay);
       flip();
       flip();
-      hold(1500);
-      platform_middle(1500);
+      hold(platform_delay);
+      platform_middle(platform_delay);
     }
     else{
-      platform_middle(1500);
+      platform_middle(platform_delay);
       flip();
       flip();
-      platform_start(1500);
+      platform_start(platform_delay);
       flip();
       flip();
-      platform_middle(1500);
+      platform_middle(platform_delay);
     }
   }
   else if(platform_rotation == 90){
-    platform_start(1500);
+    platform_start(platform_delay);
   }
   else if(platform_rotation == 180){
-    platform_middle(1500);
+    platform_middle(platform_delay);
   }
 }
 
 void platform_counterclockwise(bool turning){
   if(platform_rotation == 0){
-    platform_middle(1500);
+    platform_middle(platform_delay);
   }
   else if(platform_rotation == 90){
-    platform_end(1500);
+    platform_end(platform_delay);
   }
   else if(platform_rotation == 180){
     if(turning){
-      hold_arm_back(1500);
-      platform_middle(1500);
+      hold_arm_back(platform_delay);
+      platform_middle(platform_delay);
       flip();
       flip();
-      platform_start(1500);
+      platform_start(platform_delay);
       flip();
       flip();
-      hold(1500);
-      platform_middle(1500);
+      hold(platform_delay);
+      platform_middle(platform_delay);
     }
     else{
-      platform_middle(1500);
+      platform_middle(platform_delay);
       flip();
       flip();
-      platform_start(1500);
+      platform_start(platform_delay);
       flip();
       flip();
-      platform_middle(1500);
+      platform_middle(platform_delay);
     }
   }
 }
@@ -620,7 +613,6 @@ class Rubik{
         Serial.print("Move: ");
         Serial.println(algo[i]);
         print_cube();
-        delay(3000);
         }
       }
     }
@@ -1424,7 +1416,7 @@ class Rubik{
       // Ready platform and light arm
       platform.write(12);
       light_arm.write(180);
-      delay(1000);
+      //delay(1000);
 
       // First cube
       Serial.println("First Cube");
@@ -1449,7 +1441,7 @@ class Rubik{
 
       // Platform 45
       platform.write(51);
-      delay(1000);
+      //delay(1000);
       
       // Fourth cube
       Serial.println("Fourth Cube");
@@ -1467,7 +1459,7 @@ class Rubik{
 
       // Platform 90
       platform.write(91);
-      delay(1000);
+      //delay(1000);
       
       // Sixth cube
       Serial.println("Sixth Cube");
@@ -1485,7 +1477,7 @@ class Rubik{
 
       // Platform 135
       platform.write(131);
-      delay(1000);
+      //delay(1000);
 
       // Eighth cube
       Serial.println("Eighth Cube");
@@ -1504,7 +1496,7 @@ class Rubik{
       // Reset platform and light arm
       platform.write(12);
       light_arm.write(180);
-      delay(1000);
+      //delay(1000);
 
       print_cube();
     }
